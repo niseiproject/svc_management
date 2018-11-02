@@ -1,5 +1,8 @@
 #!/bin/bash 
 
+### PLEASE EDIT ALL THESE VARIABLES ACCORDING TO YOUR ENVIRONMENT.
+
+# LIST YOUR SVC IDs HERE.
 PRE1='pre-des1'
 PRE2='pre-des2'
 APL='pro-apl'
@@ -10,18 +13,19 @@ MER='merc'
 V7MO='v7mo'
 V7ME='v7me'
 
-SVC_PRE1='22.2.15.231'
-SVC_PRE2='22.2.16.80'
-SVC_APL='22.2.1.19'
-SVC_EST='22.2.1.37'
-SVC_MUX='22.2.1.156'
-SVC_FLOW='22.2.66.20'
-SVC_MERC='22.2.8.48'
+# ENTER THE IPs OF THE SVCs IDs DESCRIBED ABOVE
+SVC_PRE1='x.x.x.x'
+SVC_PRE2='y.y.y.y'
+SVC_APL='z.z.z.z'
+SVC_EST='a.a.a.a'
+SVC_MUX='b.b.b.b'
+SVC_FLOW='c.c.c.c'
+SVC_MERC='d.d.d.d'
+V7000_O='e.e.e.e'
+V7000_E='f.f.f.f'
 
-V7000_O='180.16.15.104'
-V7000_E='180.16.15.99'
-
-MON_USR='x101513'
+# AUTHENTICATION
+MON_USR='<Create an SVC user, allowing authentication through SSL key>'
 HOST_INFO_ARGS=5
 VDISK_INFO_ARGS=6
 
@@ -42,7 +46,7 @@ FABRIC_F="$HOME/$1_fabric.csv"
 STATS_F="$HOME/$1_stats.csv"
 STATS_PARAMS='-history cpu_pc:compression_cpu_pc:fc_mb:write_cache_pc:total_cache_pc:vdisk_mb:mdisk_mb:vdisk_r_mb:vdisk_w_mb:vdisk_r_ms:vdisk_w_ms'
 COLUMNS='VDISK ID,VDISK NAME,CAPACITY,UUID,PRIMARY POOL,SECONDARY POOL,HOST ID,HOST NAME,HOST STATUS,WWPN1,WWPN2'
-LOG='/home/ipa/admx101513/scripts/log'
+LOG='<PATH TO LOG>'
 
 #Num  Colour    #define         R G B
 
@@ -63,7 +67,7 @@ CYAN=6
 
 
 get_usage_example (){
-
+    # SAMPLE USAGE 
     echo
     echo "Example usage:"
     echo "$0 ( pre-des1 | pre-des2 | pro-apl | pro-est | pro-mux | flow | merc | v7mo | v7me)"
@@ -71,7 +75,7 @@ get_usage_example (){
 }
 
 check_parameters (){
-
+    # CHECKS GLOBAL SCRIPT PARAMETERS PASSED.
     case $1 in
     
         'pre-des1'|'pre-des2'|'pro-apl'|'pro-est'|'pro-mux'|'flow'|'merc'|'v7mo'|'v7me')
@@ -87,7 +91,7 @@ check_parameters (){
 }
 
 get_svc (){
-
+    # MULTIPLEXES AMONG THE DIFFERENT SVCs IDs.
     case $1 in
 
         'pre-des1')
@@ -138,7 +142,7 @@ get_svc (){
 valid_status (){
 
     case $1 in 
-
+        # ENTITY VALID/KNOWN STATUSES 
         'online'|'offline'|'degraded')
                                     return 0
                                     ;;
@@ -149,14 +153,14 @@ valid_status (){
 }
 
 to_GB (){
-
+    # CAPACITY TRANSLATION TO GIGABYTES
     capacity=`echo "$1 / 1073741824" | bc`
     echo $capacity
     return 0
 }
 
 is_a_number (){
-
+    # CHECKS WHETHER THE STRING IS A NUMBER OR NOT.
     str=`echo $1 | sed s/[a-zA-Z_-'.']*//g`
     if `echo $str | grep -q -E "[0-9]"`
     then
@@ -166,7 +170,7 @@ is_a_number (){
 }
 
 get_mdisk_groups (){
-
+    # RETRIEVES THE MANAGED DISKS FROM THE SPECIFIED SVC.
     svc_ip=$1
     output_file=$2
     dom=$3
@@ -210,7 +214,7 @@ get_mdisk_groups (){
 }
 
 get_host_info (){
-
+    # COLLECTS HOST INFORMATION.
     my_host=$1
     svc_ip=$2
     host_info=`ssh $MON_USR@$svc_ip lshost $my_host | grep -i -E "id|name|WWPN|status" | awk '{print $2}' | xargs | sed s/' '/,/g`
@@ -228,7 +232,7 @@ get_host_info (){
 }
 
 get_host_iogrps (){
-
+    # GETS HOST IOGRPS.
     host=$1
     svc_ip=$2
    
@@ -238,7 +242,7 @@ get_host_iogrps (){
 }
 
 get_iogrps (){
-
+    # GETS SVC IOGRPS
     svc_ip=$1
     output_f=$2
     out=`ssh -n $MON_USR@$svc_ip lsiogrp -delim=, > "$output_f"`
@@ -246,7 +250,7 @@ get_iogrps (){
 }
 
 get_remote_copy_cg (){
-
+    # RETRIEVES REMOTE COPY RELATIONSHIPS & CONSISTENCY GROUPS.
     svc_ip=$1
     output_f=$2
     out=`ssh -n $MON_USR@$svc_ip lsrcconsistgrp -delim=, > "$output_f"`
@@ -254,7 +258,7 @@ get_remote_copy_cg (){
 }
 
 get_flash_copy_map (){
-
+    # COLLECTS FLASH COPY MAPPING.
     svc_ip=$1
     output_f=$2
     out=`ssh -n $MON_USR@$svc_ip lsfcmap -delim=, > "$output_f"`
@@ -262,7 +266,7 @@ get_flash_copy_map (){
 }
 
 get_ports (){
-
+    # LISTS CURRENT FABRIC CONNECTIONS.
     svc_ip=$1
     output_f=$2
     out=`ssh -n $MON_USR@$svc_ip lsportfc -delim=, > "$output_f"`
@@ -270,7 +274,7 @@ get_ports (){
 }
 
 get_events (){
-
+    # DUMPS EVENT LOG.
     svc_ip=$1
     output_f=$2
     out=`ssh -n $MON_USR@$svc_ip lseventlog -delim=# > "$output_f"`
@@ -278,7 +282,7 @@ get_events (){
 }
 
 get_hosts (){
-
+    # LISTS HOSTS.
     svc_ip=$1
     output_f=$2
     hosts=`ssh -n $MON_USR@$svc_ip lshost | grep -v -i "^id" | awk '{print $2}' | xargs`
@@ -295,7 +299,7 @@ get_hosts (){
 }
 
 get_vdisk_list (){
-
+    # RETRIEVES VDISKS INFORMATION.
     svc_ip=$1
     vdisk_list_file=$2
     output_f=$3
@@ -332,7 +336,7 @@ get_vdisk_list (){
 }
 
 get_vdisk (){
-
+    # GETS THE INFORMATION ABOUT A CONCRETE VDISK.
     vol=$1
     svc_ip=$2
     output_file=$3
@@ -353,7 +357,7 @@ get_vdisk (){
 }
 
 get_vdisk_mapping (){
-
+    # COLLECTS VDISK MAPPING.
     svc_ip=$1
     output_f=$2
     out=`ssh -n $MON_USR@$svc_ip lshostvdiskmap -delim , 1> $output_f 2> /dev/null`
@@ -362,7 +366,7 @@ get_vdisk_mapping (){
 }
 
 get_fabric (){
-
+    # LISTS CURRENT STATUS OF SAN PATHS AMONG SVC NODES &/|| HOSTS.
     svc_ip=$1
     output_f=$2
     out=`ssh -n $MON_USR@$svc_ip lsfabric -delim=, > "$output_f"`
@@ -370,7 +374,7 @@ get_fabric (){
 }
 
 get_nodes (){
-
+    # LISTS SVC NODES.
     svc_ip=$1
     ssh -n $MON_USR@$svc_ip lsnode | grep -v "^id " | awk '{print $2}' | xargs 2> /dev/null
     return 0
@@ -419,7 +423,7 @@ get_stats (){
 }
 
 log_init (){
-    
+    # LOG INITIALIZATION.
     mylog=$1
 
     tput setaf [1-7]
@@ -431,7 +435,7 @@ log_init (){
 }
 
 log_input (){
-
+    # RECORDS INFO INTO THE LOG.
     color=$1
     eol=$2
     mylog=$3
@@ -454,7 +458,7 @@ log_input (){
 }
 
 initialize_files (){
-
+    # CSV FILES INITIALIZATION
     rm "$HOME/$1*.csv" &> /dev/null
     touch $MDISKGRP_F
     touch $VDISKS_LIST_F
@@ -465,8 +469,8 @@ initialize_files (){
     return 0
 }
 
-#MAIN
-
+# MAIN SCRIPT
+    
     log_init $LOG
 
     if ! check_parameters $1
