@@ -5,22 +5,23 @@ EST='pro-est'
 MUX='pro-mux'
 P3='pro-p3'
 
-SVC_APL='22.2.1.19'
-SVC_EST='22.2.1.37'
-SVC_MUX='22.2.1.156'
-SVC_P3='22.2.46.115'
-SVC_PRE1='22.2.15.231'
-SVC_PRE2='22.2.16.80'
+# ENTER SVC IPs, BASED ON YOUR ENVIRONMENT.
+SVC_APL='x.x.x.x'
+SVC_EST='x.x.x.x'
+SVC_MUX='x.x.x.x'
+SVC_P3='x.x.x.x'
+SVC_PRE1='x.x.x.x'
+SVC_PRE2='x.x.x.x'
 
-MON_USR='x101513'
-LOG='/home/nasadmin/Jesus/scripts/log'
+MON_USR='ENTER YOUR USER HERE'
+LOG='PATH TO LOG FILE'
 
 # MAXIMUM NUMBER OF CONCURRENT SYNCHRONIZATIONS
 SYNC_SLOTS=10
 # VDISK COPY LAUNCHER SCRIPT PATH
-LAUNCHER_PATH='/home/nasadmin/Jesus/scripts'
-KEY='/home/nasadmin/Jesus/scripts/id_rsa'
-ENDING_FILE='/home/nasadmin/Jesus/scripts/ending_file_migration'
+LAUNCHER_PATH='PATH TO launch_sync.sh DIRECTORY'
+KEY='PATH TO SSL KEY'
+ENDING_FILE='PATH TO  POST-MIGRATION LIST OF COMMANDS'
 
 #Num  Colour    #define         R G B
 
