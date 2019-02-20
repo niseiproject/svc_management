@@ -1,10 +1,5 @@
 #!/bin/bash
 
-APL='pro-apl'
-EST='pro-est'
-MUX='pro-mux'
-P3='pro-p3'
-
 # ENTER SVC IPs, BASED ON YOUR ENVIRONMENT.
 SVC_APL='x.x.x.x'
 SVC_EST='x.x.x.x'
